@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
+use App\Models\Task;
+use App\Http\Controllers\TaskController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,7 +24,13 @@ Route::post('/task', [App\Http\Controllers\TaskController::class, 'store'])->nam
 Route::get('/task/{id}', [App\Http\Controllers\TaskController::class, 'show'])->name('tasks.show');
 Route::get('/task/{id}/edit', [App\Http\Controllers\TaskController::class, 'edit'])->name('tasks.edit');
 Route::put('/task/{id}', [App\Http\Controllers\TaskController::class, 'update'])->name('tasks.update');
-Route::delete('/task/{id}', [App\Http\Controllers\TaskController::class, 'destroy'])->name('tasks.delete');
+Route::delete('/task/{id}', [App\Http\Controllers\TaskController::class, 'destroy'])->name('tasks.destroy');
+
+Route::put('/task/{task}/toggle-complete', function (Task $task) {
+    $task->toggleComplete();
+    return redirect()->route('tasks.show', ['id' => $task->id])
+                     ->with('success', 'Task updated successfully!');
+})->name('tasks.toggle-complete');
 
 
 Route::fallback(function () {

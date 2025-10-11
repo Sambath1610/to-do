@@ -10,7 +10,7 @@ class TaskController extends Controller
     
     public function index()
     {
-        $tasks = Task::latest()->get();
+        $tasks = Task::latest()->paginate(10);
         return view('index', ['tasks' => $tasks]);
     }
 
@@ -24,7 +24,7 @@ class TaskController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'long_description' => 'nullable|string',
+            'long_description' => 'required|string',
         ]);
 
 
@@ -91,5 +91,10 @@ class TaskController extends Controller
         $task->delete();
 
         return redirect()->route('tasks.index')->with('success', 'Task deleted successfully');
+    }
+
+    public function toggle_completed($id){
+        $task = Task::toggleComplete($id);
+        return redirect()->route('tasks.show', ['id' => $task->id])->with('success', 'Task updated successfully');
     }
 }
